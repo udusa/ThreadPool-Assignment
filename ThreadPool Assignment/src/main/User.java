@@ -8,6 +8,6 @@ public class User {
 		// TODO Auto-generated method stub
 	}
 	
-	public static 
+	public static void submit(){}
 
 }
