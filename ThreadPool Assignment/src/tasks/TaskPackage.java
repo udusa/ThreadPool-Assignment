@@ -2,20 +2,20 @@ package tasks;
 import java.util.concurrent.Callable;
 
 
-public abstract class Package {
+public abstract class TaskPackage<V> {
 	public final static int MULTIPLICATION_TASK=1,SUMMATION_TASK=2;
 	protected long taskId,packageId;
 	protected double result;
-	protected Callable<Object> task;
+	protected Callable<V> task;
 	
 	
-	public Package(long packageId,long taskId,Callable<Object> task){
+	public TaskPackage(long packageId,long taskId,Callable<V> task){
 		this.taskId=taskId;
 		this.task=task;
 		this.packageId=packageId;
 	}
 	
-	public Callable<Object> getTask(){
+	public Callable<V> getTask(){
 		return task;
 	}
 	
