@@ -11,6 +11,7 @@ public class Result<V> {
 	
 	public Result(){
 		results=new ArrayList<>();
+		mutex=new Semaphore(1);
 	}
 	
 	public Report<V> getResult(){
@@ -33,6 +34,7 @@ public class Result<V> {
 		try {
 			mutex.acquire();
 			results.add(r);
+			System.out.println(r);
 			return true;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

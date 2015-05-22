@@ -18,13 +18,19 @@ public class BasicTask11 implements Callable<Double>{
 		for (int i = fromIndex; i < toIndex; i++) {
 			if(i%2!=0)coefficient=-1;
 			else coefficient=1;
-			
 			double temp = coefficient*(1.0/(2*i+1));
 			ans *= temp;
-			
 		}
 		return ans;
 	}
+
+	@Override
+	public String toString() {
+		return "BasicTask11 [fromIndex=" + fromIndex + ", toIndex=" + toIndex
+				+ "]";
+	}
+	
+	
 	
 	
 	

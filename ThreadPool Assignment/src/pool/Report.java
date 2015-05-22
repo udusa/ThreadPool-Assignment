@@ -25,4 +25,9 @@ public class Report<V> {
 	public void setResult(V result) {
 		this.result = result;
 	}
+	
+	@Override
+	public String toString() {
+		return "result:"+result+",pID:"+packageId+",tID:"+taskId;
+	}
 }

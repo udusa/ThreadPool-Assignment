@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.Semaphore;
 
+import main.Result;
 import tasks.TaskPackage;
 
 public class PoolMagener<V> extends Thread {
@@ -13,25 +14,33 @@ public class PoolMagener<V> extends Thread {
 	private BlockingQueue<TaskPackage<V>> packageQ;
 	private ArrayList<Thread> poolThread;
 	private ArrayList<Report<V>> readyList;
-	
+	private Result<V> result;
 	private int packQSize;//,PThreadSize;
 	
 	private Semaphore pThreadMutex,readyMutex,packageMutex;
 	
-	public PoolMagener(int p,int t) {
+	public PoolMagener(Result<V> result,int p,int t) {
+		this.result=result;
 		packQSize=p;
+		pThreadMutex = new Semaphore(1);
+		readyMutex=new Semaphore(1);
+		packageMutex=new Semaphore(1);
+		
 		//PThreadSize=t;
 		
 		packageQ = new LinkedBlockingDeque<>(p);
 		poolThread = new ArrayList<>(t);
+		
 		readyList = new ArrayList<>(2*p);
 		for (int i = 0; i < t; i++) {
-			poolThread.add(new PThread());
+			PThread pt = new PThread();
+			poolThread.add(pt);
+			pt.start();
 		}
 		
-		pThreadMutex = new Semaphore(1);
-		readyMutex=new Semaphore(1);
-		packageMutex=new Semaphore(1);
+		ReportThread rt = new ReportThread();
+		rt.start();
+		
 	}
 	
 	//RUN
@@ -41,8 +50,10 @@ public class PoolMagener<V> extends Thread {
 			while(!packageQ.isEmpty()){
 				if(!poolThread.isEmpty()){
 					PThread t = (PThread)getThreadFromPool();
-					TaskPackage<V> tp = packageQ.poll();
-					t.setTask(tp.getTask(), tp.getPackageId(), tp.getTaskId());
+					TaskPackage<V> tp = getTaskPackage();
+					if(t!=null){
+						t.setTask(tp.getTask(), tp.getPackageId(), tp.getTaskId());
+					}
 				}
 			}
 		}
@@ -61,13 +72,26 @@ public class PoolMagener<V> extends Thread {
 		}
 	}
 	
+	public Report<V> getReport(){
+		try {
+			readyMutex.acquire();
+			return readyList.remove(0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			readyMutex.release();
+		}
+		return null;
+	}
+	
 	private boolean isFull() {
 		return packageQ.size()==packQSize;
 	}
 
 	public boolean setPackage(TaskPackage<V> p) {
 		try {
-			packageMutex.acquire();
+			packageMutex.acquire();//down
 			if(!isFull()){
 				packageQ.put(p);
 				return true;
@@ -76,7 +100,7 @@ public class PoolMagener<V> extends Thread {
 			e.printStackTrace();
 			return false;
 		}finally{
-			packageMutex.release();
+			packageMutex.release();//up
 		}
 		return false;
 	}
@@ -99,7 +123,6 @@ public class PoolMagener<V> extends Thread {
 			pThreadMutex.acquire();
 			poolThread.add(t);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			pThreadMutex.release();
@@ -112,7 +135,6 @@ public class PoolMagener<V> extends Thread {
 			pThreadMutex.acquire();
 			t = poolThread.remove(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			pThreadMutex.release();
@@ -136,6 +158,7 @@ public class PoolMagener<V> extends Thread {
 		public void setTask(Callable<V> task,long pId,long tId){
 			this.task=task;
 			r=new Report<V>(null, pId, tId);
+			System.out.println(r);
 			synchronized (sync) {
 				haveTask=true;
 				sync.notify();
@@ -152,7 +175,6 @@ public class PoolMagener<V> extends Thread {
 						try {
 							sync.wait();
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -160,10 +182,10 @@ public class PoolMagener<V> extends Thread {
 						V result=task.call();
 						if(result!=null){
 							r.setResult(result);
+							System.out.println("Thread:"+r);
 							setReport(r);
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					haveTask=false;
@@ -173,7 +195,19 @@ public class PoolMagener<V> extends Thread {
 		
 	}
 	
-
+	private class ReportThread extends Thread{
+		
+		@Override
+		public void run() {
+			while(true){
+			//	while(!readyList.isEmpty()){
+			//		Report<V> r = getReport();
+			//		if(r!=null)
+			//			result.report(r);
+			//	}
+			}
+		}
+	}
 
 
 	
