@@ -17,7 +17,7 @@ public class PoolMagener<V> extends Thread {
 	private Result<V> result;
 	private int packQSize;//,PThreadSize;
 	
-	private Semaphore pThreadMutex,readyMutex,packageMutex;
+	private Semaphore pThreadMutex,readyMutex,packageMutex,reportMutex;
 	
 	public PoolMagener(Result<V> result,int p,int t) {
 		this.result=result;
@@ -25,16 +25,17 @@ public class PoolMagener<V> extends Thread {
 		pThreadMutex = new Semaphore(1);
 		readyMutex=new Semaphore(1);
 		packageMutex=new Semaphore(1);
+		reportMutex = new Semaphore(0);
 		
 		//PThreadSize=t;
 		
 		packageQ = new LinkedBlockingDeque<>(p);
 		poolThread = new ArrayList<>(t);
-		
 		readyList = new ArrayList<>(2*p);
+		
 		for (int i = 0; i < t; i++) {
 			PThread pt = new PThread();
-			poolThread.add(pt);
+			//poolThread.add(pt);
 			pt.start();
 		}
 		
@@ -64,25 +65,27 @@ public class PoolMagener<V> extends Thread {
 		try {
 			readyMutex.acquire();
 			readyList.add(r);
+			System.out.println(readyList);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
+			reportMutex.release();
 			readyMutex.release();
 		}
 	}
 	
 	public Report<V> getReport(){
+		Report<V> rep=null;
 		try {
 			readyMutex.acquire();
-			return readyList.remove(0);
+			rep = readyList.remove(0);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			readyMutex.release();
 		}
-		return null;
+		return rep;
 	}
 	
 	private boolean isFull() {
@@ -158,7 +161,7 @@ public class PoolMagener<V> extends Thread {
 		public void setTask(Callable<V> task,long pId,long tId){
 			this.task=task;
 			r=new Report<V>(null, pId, tId);
-			System.out.println(r);
+			//System.out.println(r);
 			synchronized (sync) {
 				haveTask=true;
 				sync.notify();
@@ -180,9 +183,10 @@ public class PoolMagener<V> extends Thread {
 					}
 					try {
 						V result=task.call();
+						//System.out.println("Thread:"+result);
 						if(result!=null){
 							r.setResult(result);
-							System.out.println("Thread:"+r);
+						//	System.out.println("Thread:"+r);
 							setReport(r);
 						}
 					} catch (Exception e) {
@@ -190,6 +194,7 @@ public class PoolMagener<V> extends Thread {
 					}
 					haveTask=false;
 				}
+				//System.out.println(this);
 			}
 		}
 		
@@ -200,11 +205,13 @@ public class PoolMagener<V> extends Thread {
 		@Override
 		public void run() {
 			while(true){
-			//	while(!readyList.isEmpty()){
-			//		Report<V> r = getReport();
-			//		if(r!=null)
-			//			result.report(r);
-			//	}
+				try {
+					reportMutex.acquire();
+					result.report(getReport());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
