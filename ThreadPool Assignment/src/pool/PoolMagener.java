@@ -65,7 +65,7 @@ public class PoolMagener<V> extends Thread {
 		try {
 			readyMutex.acquire();
 			readyList.add(r);
-			System.out.println(readyList);
+			//System.out.println(readyList);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}finally{
@@ -93,6 +93,7 @@ public class PoolMagener<V> extends Thread {
 	}
 
 	public boolean setPackage(TaskPackage<V> p) {
+		//System.out.println(p);
 		try {
 			packageMutex.acquire();//down
 			if(!isFull()){

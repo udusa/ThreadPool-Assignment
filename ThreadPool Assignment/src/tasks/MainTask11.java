@@ -1,21 +1,21 @@
 package tasks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import pool.Report;
 
 public class MainTask11 implements Callable<Double>{
 	
-	ArrayList<Report<Double>> answers;
+	List<Report<Double>> answers;
 	
-	public MainTask11() {
-		answers = new ArrayList<>();
+	public MainTask11(List<Report<Double>> ans) {
+		answers = ans;
 	}
 	
-	public void addToCalc(Report<Double> r){
-		answers.add(r);
+	public void addToCalc(ArrayList<Report<Double>> ans){
+		answers=ans;
 	}
 	
 	@Override

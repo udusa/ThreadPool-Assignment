@@ -8,19 +8,30 @@ import tasks.TaskPackage;
 
 public class Feeder<V> extends Thread{
 	
+	private static ArrayList<Semaphore> mutexOrder = new ArrayList<>();
+	private static int ID=0;
+	
 	private Semaphore mutex;
+	private int id;
 	private ArrayList<TaskPackage<V>> packageList;
 	PoolMagener<V> pm;
 	public Feeder(ArrayList<TaskPackage<V>> list,PoolMagener<V> pm){
 		packageList=list;
 		this.pm=pm;
 		mutex=new Semaphore(1);
+		id=ID;
+		ID++;
+		if(mutexOrder.size() > 1){
+			mutexOrder.add(new Semaphore(0));
+		}else{
+			mutexOrder.add(new Semaphore(1));
+		}
 	}
 	
 	public void addSet(ArrayList<TaskPackage<V>> set){
 		try {
 			mutex.acquire();
-			packageList.addAll(set);	
+			packageList.addAll(set);
 		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
@@ -35,6 +46,21 @@ public class Feeder<V> extends Thread{
 	public void run() {
 		while(true){
 			if(!packageList.isEmpty()){
+				try {
+					mutexOrder.get(id).acquire();
+					TaskPackage<V> temp = packageList.get(0);
+					if(pm.setPackage(temp)){
+						mutex.acquire();
+						packageList.remove(0);
+						mutex.release();
+					}
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}finally{
+					mutexOrder.get((id+1)%mutexOrder.size()).release();;
+				}
+				/*
 				TaskPackage<V> temp = packageList.get(0);
 				if(pm.setPackage(temp)){
 					try {
@@ -46,6 +72,7 @@ public class Feeder<V> extends Thread{
 						mutex.release();
 					}
 				}
+				*/
 			}
 		}
 	}

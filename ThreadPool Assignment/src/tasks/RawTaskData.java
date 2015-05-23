@@ -24,6 +24,12 @@ public class RawTaskData {
 	public long getAmount() {
 		return amount;
 	}
+
+	@Override
+	public String toString() {
+		return "RawTaskData [packageID=" + packageID + ", taskId=" + taskId
+				+ ", amount=" + amount + "]";
+	}
 	
 	
 	
