@@ -12,7 +12,7 @@ public class BasicTask12mul extends BasicTask11{
 		int coefficient = 1;
 		for (int i = getFromIndex(); i < getToIndex(); i++) {
 			if(i%2!=0)coefficient = -1;
-			ans *= coefficient*(2*i+3);
+			ans *= coefficient/(2.0*i+3);
 		}
 		return ans;
 	}
