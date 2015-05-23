@@ -1,0 +1,22 @@
+if(data.getAmount()==1){
+						Report<Double> r = ans.get(0);
+						System.out.println("Expr. type (1.1), n = "+arr11[(int)r.getPackageId()]+" : "+r.getResult());
+					}else{
+						ArrayList<TaskPackage<Double>> mainTasks = new ArrayList<>();
+						int n = ans.size();
+						int amount = ans.size()/m;
+						if(ans.size()%m!=0){
+							amount++;
+						}
+						for (int j = 0; j < n; j+=m) {
+							if(j+m < n){
+								List<Report<Double>> subList = ans.subList(j, j+m);
+								mainTasks.add(new TaskPackage<>(pId, TaskPackage.MULTIPLICATION_TASK, amount, new MainTask11(subList)));
+							}else{
+								List<Report<Double>> subList = ans.subList(j, n);
+								mainTasks.add(new TaskPackage<>(pId, TaskPackage.MULTIPLICATION_TASK, amount, new MainTask11(subList)));
+							}
+						}
+						follow.add(new RawTaskData(pId, mtId, amount));
+						f1.addSet(mainTasks);
+					}
