@@ -29,6 +29,15 @@ public class BasicTask11 implements Callable<Double>{
 		return "BasicTask11 [fromIndex=" + fromIndex + ", toIndex=" + toIndex
 				+ "]";
 	}
+
+	public int getFromIndex() {
+		return fromIndex;
+	}
+
+	public int getToIndex() {
+		return toIndex;
+	}
+	
 	
 	
 	
