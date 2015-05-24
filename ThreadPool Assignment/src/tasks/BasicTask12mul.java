@@ -14,6 +14,7 @@ public class BasicTask12mul extends BasicTask11{
 			if(i%2!=0)coefficient = -1;
 			ans *= coefficient/(2.0*i+3);
 		}
+		if(ans==1)return 0.0;
 		return ans;
 	}
 	

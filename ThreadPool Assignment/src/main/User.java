@@ -23,8 +23,8 @@ public class User {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
 			int arr11[] = {0};//{13,5,31,111,56,32};
-			int arr12mul[] = {3,15,6,24};
-			int arr12sum[] = {16,8};
+			int arr12mul[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
+			int arr12sum[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
 			//int m=2;
 			//test11(arr11);
 			for (int j = 0; j < arr12sum.length + arr12mul.length; j++) {
@@ -46,7 +46,7 @@ public class User {
 			}
 			
 			//test12(3, 5);
-			submit(arr11,arr12mul,arr12sum,2,8);
+			submit(arr11,arr12mul,arr12sum,2,3);
 		//}
 		
 	
