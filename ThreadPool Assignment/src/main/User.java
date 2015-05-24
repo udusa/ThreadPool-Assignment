@@ -18,19 +18,24 @@ public class User {
 
 	public static void main(String[] args) {
 		
-		//test();
+		//test();m=2,s=8
 		//for (int i = 0; i < 10; i++) {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
-			int arr11[] = {13,5,31,111,56,32};
-			int arr12mul[] = {9,5,23,73};
+			int arr11[] = {1};//{13,5,31,111,56,32};
+			int arr12mul[] = {9,5,23,73,18};
 			int arr12sum[] = {68,2};
 			//int m=2;
 			//test11(arr11);
-			for (int j = 0; j < arr12sum.length; j++) {
+			for (int j = 0; j < arr12sum.length + arr12mul.length; j++) {
 				{
-					BasicTask12mul b1=new BasicTask12mul(1, arr12mul[j]+1);
-					BasicTask12sum b2 = new BasicTask12sum(1, arr12sum[j]+1);
+					int m1=0;
+					int s1=0;
+					if(j<arr12mul.length)m1=arr12mul[j]+1;
+					if(j<arr12sum.length)s1 =  arr12sum[j]+1;
+					if(j>=arr12mul.length && j>=arr12sum.length)break;
+					BasicTask12mul b1=new BasicTask12mul(1, m1);
+					BasicTask12sum b2 = new BasicTask12sum(1,s1);
 					try {
 						System.out.println(b1.call()+b2.call());
 					} catch (Exception e) {
