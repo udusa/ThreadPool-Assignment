@@ -16,5 +16,11 @@ public class BasicTask12mul extends BasicTask11{
 		}
 		return ans;
 	}
+	
+	@Override
+	public String toString() {
+		return "BT12m[" + getFromIndex() + "," + getToIndex()
+				+ ")";
+	}
 
 }

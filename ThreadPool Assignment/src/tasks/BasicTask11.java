@@ -26,8 +26,8 @@ public class BasicTask11 implements Callable<Double>{
 
 	@Override
 	public String toString() {
-		return "BasicTask11 [fromIndex=" + fromIndex + ", toIndex=" + toIndex
-				+ "]";
+		return "BT11[" + fromIndex + "," + toIndex
+				+ ")";
 	}
 
 	public int getFromIndex() {

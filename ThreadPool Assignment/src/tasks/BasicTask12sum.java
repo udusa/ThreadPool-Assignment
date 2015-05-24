@@ -17,4 +17,10 @@ public class BasicTask12sum extends BasicTask11{
 		return ans;
 		
 	}
+	
+	@Override
+	public String toString() {
+		return "BT12s[" + getFromIndex() + "," + getToIndex()
+				+ ")";
+	}
 }

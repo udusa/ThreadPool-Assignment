@@ -22,9 +22,9 @@ public class User {
 		//for (int i = 0; i < 10; i++) {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
-			int arr11[] = {1};//{13,5,31,111,56,32};
-			int arr12mul[] = {9,5,23,73,18};
-			int arr12sum[] = {68,2};
+			int arr11[] = {0};//{13,5,31,111,56,32};
+			int arr12mul[] = {3,15,6,24};
+			int arr12sum[] = {16,8};
 			//int m=2;
 			//test11(arr11);
 			for (int j = 0; j < arr12sum.length + arr12mul.length; j++) {
@@ -129,7 +129,7 @@ public class User {
 			pId++;
 		}
 		
-		
+		System.out.println(packages2);
 		
 		Result<Double> result = new Result<>();
 		PoolMagener<Double> pm = new PoolMagener<>(result, 10, 10);
@@ -153,7 +153,11 @@ public class User {
 						if(data.getAmount()==1){
 							System.out.println(ans.get(0));
 						}else if(data.getAmount()==2){
-							mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.SUMMATION_TASK, 1, new MainTaskSum(ans)));
+							if(ans.get(0).getTaskId()==TaskPackage.MULTIPLICATION_TASK && ans.get(1).getTaskId()==TaskPackage.MULTIPLICATION_TASK){
+								mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.MULTIPLICATION_TASK, 1, new MainTaskMul(ans)));
+							}else{
+								mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.SUMMATION_TASK, 1, new MainTaskSum(ans)));
+							}
 							f1.addSet(mainTasks);
 							follow.add(new RawTaskData(data.getPackageID(), 0, 1));
 						}else{

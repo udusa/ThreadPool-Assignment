@@ -38,7 +38,7 @@ public class TaskPackage<V> {
 
 	@Override
 	public String toString() {
-		return "TaskPackage [taskId=" + taskId + ", packageId=" + packageId
-				+ ", amount=" + amount + ", task=" + task + "]";
+		return "TP[tId=" + taskId + ", pId=" + packageId
+				+ ", amt=" + amount + ", task=" + task + "]";
 	}
 }
