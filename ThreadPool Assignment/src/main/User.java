@@ -24,7 +24,7 @@ public class User {
 			int m = (int)(Math.random()*25+2);
 			int arr11[] = {13,5,31,111,56,32};
 			int arr12mul[] = {9,5,23,73};
-			int arr12sum[] = {68,2,15,8};
+			int arr12sum[] = {68,2};
 			//int m=2;
 			//test11(arr11);
 			for (int j = 0; j < arr12sum.length; j++) {
@@ -182,7 +182,7 @@ public class User {
 								}
 								//follow.add(new RawTaskData(pId, TaskPackage.MULTIPLICATION_TASK, amount));
 								finalAmount+=amount;
-							}else{
+							}else if(mul.size()==1){
 								result.report(mul.get(0));
 								finalAmount++;
 							}
@@ -202,7 +202,7 @@ public class User {
 									mainTasks.add(new TaskPackage<>(pId, TaskPackage.SUMMATION_TASK,amount, new MainTaskSum(subList)));
 								}
 								finalAmount+=amount;
-							}else{
+							}else if(sum.size()==1){
 								result.report(sum.get(0));
 								finalAmount++;
 							}
