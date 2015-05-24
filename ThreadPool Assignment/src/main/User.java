@@ -19,33 +19,36 @@ public class User {
 	public static void main(String[] args) {
 		
 		//test();
-		for (int i = 0; i < 10; i++) {
+		//for (int i = 0; i < 10; i++) {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
 			int arr11[] = {13,5,31,111,56,32};
-			int arr12mul[] = {3};//{3,5,7,9};
-			int arr12sum[] = {3};//{5,2,8,6};
+			int arr12mul[] = {9,5,23,73};
+			int arr12sum[] = {68,2,15,8};
 			//int m=2;
 			//test11(arr11);
-			{
-				BasicTask12mul b1=new BasicTask12mul(1, 4);
-				BasicTask12sum b2 = new BasicTask12sum(1, 4);
-				try {
-					System.out.println(b1.call()+b2.call());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			for (int j = 0; j < arr12sum.length; j++) {
+				{
+					BasicTask12mul b1=new BasicTask12mul(1, arr12mul[j]+1);
+					BasicTask12sum b2 = new BasicTask12sum(1, arr12sum[j]+1);
+					try {
+						System.out.println(b1.call()+b2.call());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
-			//test12(3, 3);
-			submit(arr11,arr12mul,arr12sum,3,3);
-		}
+			
+			//test12(3, 5);
+			submit(arr11,arr12mul,arr12sum,2,8);
+		//}
 		
 	
 		
 	}
 	
-	public static void submit(int arr11[],int arr12mul[],int arr12sum[],int m,int s){
+	public static void submit(int arr11[],int arr12mul[],int arr12sum[],int m,int s){ 
 		
 		ArrayList<RawTaskData> follow = new ArrayList<>();
 		ArrayList<TaskPackage<Double>> packages1 = new ArrayList<>();
@@ -81,7 +84,7 @@ public class User {
 			if(i<arr12mul.length){
 				n = arr12mul[i];
 				tempAmount = n/m;
-				if(n%m!=0){
+				if(n%m!=0 || tempAmount==0){
 					tempAmount++;
 				}
 				for (int j = 1; j < arr12mul[i]+1; j+=m) {
@@ -99,7 +102,7 @@ public class User {
 			if(i<arr12sum.length){
 				n = arr12sum[i];
 				tempAmount = n/s;
-				if(n%m!=0){
+				if(n%s!=0 || tempAmount==0){
 					tempAmount++;
 				}
 				for (int j = 1; j < arr12sum[i]+1; j+=s) {
@@ -115,7 +118,9 @@ public class User {
 			}
 			//System.out.println(new RawTaskData(pId, mtId, amount));
 			if(i >= arr12sum.length && i >= arr12mul.length)break;
-			follow.add(new RawTaskData(pId, mtId, amount));
+			RawTaskData rd = new RawTaskData(pId, mtId, amount);
+			System.out.println(rd);
+			follow.add(rd);
 			pId++;
 		}
 		
@@ -160,8 +165,8 @@ public class User {
 							//Multiplication 1.2
 							int finalAmount=0;
 							int n = mul.size();
-							int amount = mul.size()/m;
-							if(ans.size()%m!=0){
+							int amount = n/m;
+							if(n%m!=0){
 								amount++;
 							}
 							pId = data.getPackageID();
@@ -178,6 +183,7 @@ public class User {
 								//follow.add(new RawTaskData(pId, TaskPackage.MULTIPLICATION_TASK, amount));
 								finalAmount+=amount;
 							}else{
+								result.report(mul.get(0));
 								finalAmount++;
 							}
 							//Summation 1.2
@@ -197,6 +203,7 @@ public class User {
 								}
 								finalAmount+=amount;
 							}else{
+								result.report(sum.get(0));
 								finalAmount++;
 							}
 							if(!mainTasks.isEmpty()){
