@@ -45,10 +45,11 @@ public class Result<V> {
 	}
 	
 	public ArrayList<Report<V>> getResultSet(long pId,long tId,long amount){
-		int index = isContains(pId, amount);
-		if(index==-1)return null;
+		
 		try {
 			mutex.acquire();
+			int index = isContains(pId, amount);
+			if(index==-1)return null;
 			return results.remove(index);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
