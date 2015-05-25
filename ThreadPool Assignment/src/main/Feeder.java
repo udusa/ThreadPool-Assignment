@@ -31,6 +31,7 @@ public class Feeder<V> extends Thread{
 	public void addSet(ArrayList<TaskPackage<V>> set){
 		try {
 			mutex.acquire();
+		//	System.out.println(set);
 			packageList.addAll(set);
 		} catch (InterruptedException e) {
 			
@@ -45,11 +46,13 @@ public class Feeder<V> extends Thread{
 	@Override
 	public void run() {
 		while(true){
-			if(!packageList.isEmpty()){
+		//	while(!packageList.isEmpty()){
 				try {
 					mutexOrder.get(id).acquire();
-					TaskPackage<V> temp = packageList.get(0);
-					if(pm.setPackage(temp)){
+					TaskPackage<V> temp=null;
+					if(!packageList.isEmpty())
+						temp = packageList.get(0);
+					if(temp!=null && pm.setPackage(temp)){
 						mutex.acquire();
 						packageList.remove(0);
 						mutex.release();
@@ -73,7 +76,7 @@ public class Feeder<V> extends Thread{
 					}
 				}
 				*/
-			}
+		//	}
 		}
 	}
 	

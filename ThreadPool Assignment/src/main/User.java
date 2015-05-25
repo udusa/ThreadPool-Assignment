@@ -22,9 +22,11 @@ public class User {
 		//for (int i = 0; i < 10; i++) {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
-			int arr11[] = {0};//{13,5,31,111,56,32};
+			int arr11[] = {13,5,31,111,56,32};
 			int arr12mul[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
 			int arr12sum[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
+//			int arr12mul[] = {63};
+//			int arr12sum[] = {};
 			//int m=2;
 			//test11(arr11);
 			for (int j = 0; j < arr12sum.length + arr12mul.length; j++) {
@@ -37,7 +39,7 @@ public class User {
 					BasicTask12mul b1=new BasicTask12mul(1, m1);
 					BasicTask12sum b2 = new BasicTask12sum(1,s1);
 					try {
-						System.out.println(b1.call()+b2.call());
+						System.out.println("m:"+(m1-1)+",s:"+(s1-1)+" : "+(b1.call()+b2.call()));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -58,9 +60,9 @@ public class User {
 		ArrayList<RawTaskData> follow = new ArrayList<>();
 		ArrayList<TaskPackage<Double>> packages1 = new ArrayList<>();
 		ArrayList<TaskPackage<Double>> packages2 = new ArrayList<>();
-		long pId = 0;
-		long mtId = TaskPackage.MULTIPLICATION_TASK;
-		long stId = TaskPackage.SUMMATION_TASK;
+		int pId = 0;
+		int mtId = TaskPackage.MULTIPLICATION_TASK;
+		int stId = TaskPackage.SUMMATION_TASK;
 		//Preparing 1.1
 		
 		for (int i = 0; i < arr11.length; i++) {
@@ -124,18 +126,20 @@ public class User {
 			//System.out.println(new RawTaskData(pId, mtId, amount));
 			if(i >= arr12sum.length && i >= arr12mul.length)break;
 			RawTaskData rd = new RawTaskData(pId, mtId, amount);
-			System.out.println(rd);
+			//System.out.println(rd);
 			follow.add(rd);
 			pId++;
 		}
 		
-		System.out.println(packages2);
+		//System.out.println(packages2);
 		
 		Result<Double> result = new Result<>();
 		PoolMagener<Double> pm = new PoolMagener<>(result, 10, 10);
 		Feeder<Double> f1 =new Feeder<>(packages2, pm);
+		Feeder<Double> f2 =new Feeder<>(packages1, pm);
 		pm.start();
 		f1.start();
+		f2.start();
 		
 		while(true){
 			int i=-1;
@@ -149,84 +153,18 @@ public class User {
 					if(data.getPackageID()<arr11.length){
 						cheack11(data, ans, arr11, m, follow, f1);
 					}else{
-						ArrayList<TaskPackage<Double>> mainTasks = new ArrayList<>();
-						if(data.getAmount()==1){
-							System.out.println(ans.get(0));
-						}else if(data.getAmount()==2){
-							if(ans.get(0).getTaskId()==TaskPackage.MULTIPLICATION_TASK && ans.get(1).getTaskId()==TaskPackage.MULTIPLICATION_TASK){
-								mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.MULTIPLICATION_TASK, 1, new MainTaskMul(ans)));
-							}else{
-								mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.SUMMATION_TASK, 1, new MainTaskSum(ans)));
-							}
-							f1.addSet(mainTasks);
-							follow.add(new RawTaskData(data.getPackageID(), 0, 1));
-						}else{
-							ArrayList<Report<Double>> mul = new ArrayList<>();
-							ArrayList<Report<Double>> sum = new ArrayList<>();
-							for (int j = 0; j < ans.size(); j++) {
-								Report<Double> r = ans.get(j);
-								if(r.getTaskId()==TaskPackage.MULTIPLICATION_TASK){
-									mul.add(r);
-								}else{
-									sum.add(r);
-								}
-							}
-							//Multiplication 1.2
-							int finalAmount=0;
-							int n = mul.size();
-							int amount = n/m;
-							if(n%m!=0){
-								amount++;
-							}
-							pId = data.getPackageID();
-							List<Report<Double>> subList;
-							if(mul.size()>1){
-								for (int j = 0; j < mul.size(); j+=m) {
-									if(j+m < n){
-										subList = mul.subList(j, j+m);
-									}else{
-										subList = mul.subList(j, n);
-									}
-									mainTasks.add(new TaskPackage<>(pId, TaskPackage.MULTIPLICATION_TASK,amount, new MainTaskMul(subList)));
-								}
-								//follow.add(new RawTaskData(pId, TaskPackage.MULTIPLICATION_TASK, amount));
-								finalAmount+=amount;
-							}else if(mul.size()==1){
-								result.report(mul.get(0));
-								finalAmount++;
-							}
-							//Summation 1.2
-							n = sum.size();
-							amount = n/s;
-							if(n%s!=0){
-								amount++;
-							}
-							if(sum.size()>1){
-								for (int j = 0; j < sum.size(); j+=s) {
-									if(j+m < n){
-										subList = sum.subList(j, j+s);
-									}else{
-										subList = sum.subList(j, n);
-									}
-									mainTasks.add(new TaskPackage<>(pId, TaskPackage.SUMMATION_TASK,amount, new MainTaskSum(subList)));
-								}
-								finalAmount+=amount;
-							}else if(sum.size()==1){
-								result.report(sum.get(0));
-								finalAmount++;
-							}
-							if(!mainTasks.isEmpty()){
-								f1.addSet(mainTasks);
-								follow.add(new RawTaskData(pId, 0, finalAmount));
-							}
-						}
+						cheak12(data, arr11, arr12mul, arr12sum, ans, f1, follow, m, s, result);
+						
+						
+						//end else
 					}
 				}
 			}
 		}
 	}
 	
-	public static void cheack11(RawTaskData data,ArrayList<Report<Double>> ans,int[] arr11,int m,ArrayList<RawTaskData> follow,Feeder<Double> f1){
+	public static void cheack11(RawTaskData data,ArrayList<Report<Double>> ans,int[] arr11,int m,
+						ArrayList<RawTaskData> follow,Feeder<Double> f){
 		
 		if(data.getAmount()==1){
 			Report<Double> r = ans.get(0);
@@ -238,7 +176,7 @@ public class User {
 			if(ans.size()%m!=0){
 				amount++;
 			}
-			long pId = data.getPackageID();
+			int pId = data.getPackageID();
 			List<Report<Double>> subList;
 			for (int j = 0; j < n; j+=m) {
 				if(j+m < n){
@@ -249,11 +187,94 @@ public class User {
 				mainTasks.add(new TaskPackage<>(pId, TaskPackage.MULTIPLICATION_TASK, amount, new MainTaskMul(subList)));
 			}
 			follow.add(new RawTaskData(pId, TaskPackage.MULTIPLICATION_TASK, amount));
-			f1.addSet(mainTasks);
+			f.addSet(mainTasks);
 		}
 	}
 	
-	
+	public static void cheak12(RawTaskData data,int[] arr11,int[] arr12mul,int[] arr12sum,
+						ArrayList<Report<Double>> ans,Feeder<Double> f,ArrayList<RawTaskData> follow,int m,int s,Result<Double> result){
+		ArrayList<TaskPackage<Double>> mainTasks = new ArrayList<>();
+		if(data.getAmount()==1){
+			//System.out.println(ans.get(0));
+			int packId = (int)data.getPackageID()-arr11.length;
+			//System.out.println(arr11.length);
+			int mulTimes=0,sumTimes=0;
+			if(packId<arr12mul.length){
+				mulTimes=arr12mul[packId];
+			}
+			if(packId<arr12sum.length){
+				sumTimes=arr12sum[packId];
+			}
+			System.out.println("Expr. type (1.2), l = "+mulTimes+", m = "+sumTimes+" : "+ans.get(0).getResult());
+		}else if(data.getAmount()==2){
+			if(ans.get(0).getTaskId()==TaskPackage.MULTIPLICATION_TASK && ans.get(1).getTaskId()==TaskPackage.MULTIPLICATION_TASK){
+				mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.MULTIPLICATION_TASK, 1, new MainTaskMul(ans)));
+			}else{
+				mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.SUMMATION_TASK, 1, new MainTaskSum(ans)));
+			}
+			f.addSet(mainTasks);
+			follow.add(new RawTaskData(data.getPackageID(), 0, 1));
+		}else{
+			ArrayList<Report<Double>> mul = new ArrayList<>();
+			ArrayList<Report<Double>> sum = new ArrayList<>();
+			for (int j = 0; j < ans.size(); j++) {
+				Report<Double> r = ans.get(j);
+				if(r.getTaskId()==TaskPackage.MULTIPLICATION_TASK){
+					mul.add(r);
+				}else{
+					sum.add(r);
+				}
+			}
+			//Multiplication 1.2
+			int finalAmount=0;
+			int n = mul.size();
+			int amount = n/m;
+			if(n%m!=0){
+				amount++;
+			}
+			int pId = data.getPackageID();
+			List<Report<Double>> subList;
+			if(mul.size()>1){
+				for (int j = 0; j < mul.size(); j+=m) {
+					if(j+m < n){
+						subList = mul.subList(j, j+m);
+					}else{
+						subList = mul.subList(j, n);
+					}
+					mainTasks.add(new TaskPackage<>(pId, TaskPackage.MULTIPLICATION_TASK,amount, new MainTaskMul(subList)));
+				}
+				//follow.add(new RawTaskData(pId, TaskPackage.MULTIPLICATION_TASK, amount));
+				finalAmount+=amount;
+			}else if(mul.size()==1){
+				result.report(mul.get(0));
+				finalAmount++;
+			}
+			//Summation 1.2
+			n = sum.size();
+			amount = n/s;
+			if(n%s!=0){
+				amount++;
+			}
+			if(sum.size()>1){
+				for (int j = 0; j < sum.size(); j+=s) {
+					if(j+m < n){
+						subList = sum.subList(j, j+s);
+					}else{
+						subList = sum.subList(j, n);
+					}
+					mainTasks.add(new TaskPackage<>(pId, TaskPackage.SUMMATION_TASK,amount, new MainTaskSum(subList)));
+				}
+				finalAmount+=amount;
+			}else if(sum.size()==1){
+				result.report(sum.get(0));
+				finalAmount++;
+			}
+			if(!mainTasks.isEmpty()){
+				f.addSet(mainTasks);
+				follow.add(new RawTaskData(pId, 0, finalAmount));
+			}
+		}
+	}
 	
 	public static void test11(int arr11[]){
 		for (int i = 0; i < arr11.length; i++) {

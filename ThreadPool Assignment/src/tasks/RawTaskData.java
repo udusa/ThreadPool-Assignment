@@ -2,22 +2,22 @@ package tasks;
 
 public class RawTaskData {
 	
-	private long packageID;
-	private long taskId;
+	private int packageID;
+	private int taskId;
 	private long amount;
 	
-	public RawTaskData(long packageID, long taskId, long amount) {
+	public RawTaskData(int packageID, int taskId, long amount) {
 		super();
 		this.packageID = packageID;
 		this.taskId = taskId;
 		this.amount = amount;
 	}
 
-	public long getPackageID() {
+	public int getPackageID() {
 		return packageID;
 	}
 
-	public long getTaskId() {
+	public int getTaskId() {
 		return taskId;
 	}
 

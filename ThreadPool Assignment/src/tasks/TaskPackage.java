@@ -4,11 +4,12 @@ import java.util.concurrent.Callable;
 
 public class TaskPackage<V> {
 	public final static int MULTIPLICATION_TASK=1,SUMMATION_TASK=2;
-	protected long taskId,packageId,amount;
+	protected long amount;
+	protected int taskId,packageId;
 	protected Callable<V> task;
 	
 	
-	public TaskPackage(long packageId,long taskId,long amount,Callable<V> task){
+	public TaskPackage(int packageId,int taskId,long amount,Callable<V> task){
 		this.taskId=taskId;
 		this.task=task;
 		this.packageId=packageId;
