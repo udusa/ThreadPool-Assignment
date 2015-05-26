@@ -159,7 +159,7 @@ public class PoolMagener<V> extends Thread {
 			sync=new Object();
 		}
 		
-		public void setTask(Callable<V> task,long pId,long tId){
+		public void setTask(Callable<V> task,int pId,int tId){
 			this.task=task;
 			r=new Report<V>(null, pId, tId);
 			//System.out.println(r);

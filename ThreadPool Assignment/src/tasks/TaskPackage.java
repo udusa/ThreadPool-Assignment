@@ -21,11 +21,11 @@ public class TaskPackage<V> {
 	}
 	
 	
-	public long getTaskId(){
+	public int getTaskId(){
 		return taskId;
 	}
 
-	public long getPackageId() {
+	public int getPackageId() {
 		return packageId;
 	}
 

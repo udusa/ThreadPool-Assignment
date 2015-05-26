@@ -2,9 +2,9 @@ package pool;
 
 public class Report<V> {
 	private V result;
-	private long packageId,taskId;
+	private int packageId,taskId;
 	
-	public Report(V result,long packageId,long taskId) {
+	public Report(V result,int packageId,int taskId) {
 		this.result=result;
 		this.packageId=packageId;
 		this.taskId=taskId;
@@ -14,11 +14,11 @@ public class Report<V> {
 		return result;
 	}
 
-	public long getPackageId() {
+	public int getPackageId() {
 		return packageId;
 	}
 
-	public long getTaskId() {
+	public int getTaskId() {
 		return taskId;
 	}
 

@@ -1,7 +1,11 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import pool.PoolMagener;
 import pool.Report;
@@ -15,7 +19,7 @@ import tasks.TaskPackage;
 
 
 public class User {
-
+	
 	public static void main(String[] args) {
 		
 		//test();m=2,s=8
@@ -141,7 +145,9 @@ public class User {
 		f1.start();
 		f2.start();
 		
+		
 		while(true){
+			Queue<Report<Double>> print12 = new LinkedList();
 			int i=-1;
 			while(!follow.isEmpty()){
 				i=(i+1)%follow.size();
@@ -153,12 +159,22 @@ public class User {
 					if(data.getPackageID()<arr11.length){
 						cheack11(data, ans, arr11, m, follow, f1);
 					}else{
-						cheak12(data, arr11, arr12mul, arr12sum, ans, f1, follow, m, s, result);
-						
-						
+						cheak12(data, arr11, arr12mul, arr12sum, ans, f1, follow, m, s, result,print12);
 						//end else
 					}
 				}
+			}
+			while(!print12.isEmpty()){
+				Report<Double> r = print12.poll();
+				int packId = r.getPackageId()-arr11.length;
+				int mulTimes=0,sumTimes=0;
+				if(packId<arr12mul.length){
+					mulTimes=arr12mul[packId];
+				}
+				if(packId<arr12sum.length){
+					sumTimes=arr12sum[packId];
+				}
+				System.out.println("Expr. type (1.2), l = "+mulTimes+", m = "+sumTimes+" : "+r.getResult());
 			}
 		}
 	}
@@ -192,12 +208,13 @@ public class User {
 	}
 	
 	public static void cheak12(RawTaskData data,int[] arr11,int[] arr12mul,int[] arr12sum,
-						ArrayList<Report<Double>> ans,Feeder<Double> f,ArrayList<RawTaskData> follow,int m,int s,Result<Double> result){
+						ArrayList<Report<Double>> ans,Feeder<Double> f,ArrayList<RawTaskData> follow,int m,int s,Result<Double> result
+						,Queue<Report<Double>> print12){
 		ArrayList<TaskPackage<Double>> mainTasks = new ArrayList<>();
 		if(data.getAmount()==1){
-			//System.out.println(ans.get(0));
+			print12.add(ans.get(0));
+			/*
 			int packId = (int)data.getPackageID()-arr11.length;
-			//System.out.println(arr11.length);
 			int mulTimes=0,sumTimes=0;
 			if(packId<arr12mul.length){
 				mulTimes=arr12mul[packId];
@@ -206,6 +223,7 @@ public class User {
 				sumTimes=arr12sum[packId];
 			}
 			System.out.println("Expr. type (1.2), l = "+mulTimes+", m = "+sumTimes+" : "+ans.get(0).getResult());
+			*/
 		}else if(data.getAmount()==2){
 			if(ans.get(0).getTaskId()==TaskPackage.MULTIPLICATION_TASK && ans.get(1).getTaskId()==TaskPackage.MULTIPLICATION_TASK){
 				mainTasks.add(new TaskPackage(data.getPackageID(), TaskPackage.MULTIPLICATION_TASK, 1, new MainTaskMul(ans)));
