@@ -55,12 +55,13 @@ public class Feeder<V> extends Thread{
 					if(temp!=null && pm.setPackage(temp)){
 						mutex.acquire();
 						packageList.remove(0);
-						mutex.release();
+						
 					}
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}finally{
+					mutex.release();
 					mutexOrder.get((id+1)%mutexOrder.size()).release();;
 				}
 				/*
