@@ -12,6 +12,7 @@ public class Feeder<V> extends Thread{
 	private static int ID=0;
 	
 	private Semaphore mutex;
+	private boolean wasAcquired = false;
 	private int id;
 	private ArrayList<TaskPackage<V>> packageList;
 	PoolMagener<V> pm;
@@ -21,10 +22,10 @@ public class Feeder<V> extends Thread{
 		mutex=new Semaphore(1);
 		id=ID;
 		ID++;
-		if(mutexOrder.size() > 1){
-			mutexOrder.add(new Semaphore(0));
-		}else{
+		if(mutexOrder.isEmpty()){
 			mutexOrder.add(new Semaphore(1));
+		}else{
+			mutexOrder.add(new Semaphore(0));
 		}
 	}
 	
@@ -54,6 +55,7 @@ public class Feeder<V> extends Thread{
 						temp = packageList.get(0);
 					if(temp!=null && pm.setPackage(temp)){
 						mutex.acquire();
+						wasAcquired=true;
 						packageList.remove(0);
 						
 					}
@@ -61,8 +63,11 @@ public class Feeder<V> extends Thread{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}finally{
-					mutex.release();
-					mutexOrder.get((id+1)%mutexOrder.size()).release();;
+					if(wasAcquired){
+						wasAcquired=false;
+						mutex.release();
+					}
+					mutexOrder.get((id+1)%mutexOrder.size()).release();
 				}
 				/*
 				TaskPackage<V> temp = packageList.get(0);

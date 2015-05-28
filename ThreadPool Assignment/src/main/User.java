@@ -26,13 +26,15 @@ public class User {
 		//for (int i = 0; i < 10; i++) {
 			int n = (int)(Math.random()*100+1);
 			int m = (int)(Math.random()*25+2);
-			int arr11[] = {13,5,31,111,56,32};
+			int[] arr11 = {13,5,31,111,56,32};
+//			int arr11[] = {13};//{13,5,31,111,56,32};
 			int arr12mul[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
 			int arr12sum[] = {(int)(Math.random()*100+1),(int)(Math.random()*100+1),(int)(Math.random()*100+1)};
-//			int arr12mul[] = {63};
-//			int arr12sum[] = {};
+//			int arr12mul[] = {(int)(Math.random()*100+1)};
+//			int arr12sum[] = {(int)(Math.random()*100+1)};
 			//int m=2;
 			//test11(arr11);
+			/*
 			for (int j = 0; j < arr12sum.length + arr12mul.length; j++) {
 				{
 					int m1=0;
@@ -50,7 +52,7 @@ public class User {
 					}
 				}
 			}
-			
+			*/
 			//test12(3, 5);
 			submit(arr11,arr12mul,arr12sum,2,3);
 		//}
@@ -67,8 +69,8 @@ public class User {
 		int pId = 0;
 		int mtId = TaskPackage.MULTIPLICATION_TASK;
 		int stId = TaskPackage.SUMMATION_TASK;
-		//Preparing 1.1
 		
+		//Preparing 1.1
 		for (int i = 0; i < arr11.length; i++) {
 			int n = arr11[i];
 			int amount = n/m;
